@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Draggable from "react-draggable";
 import { useState } from "react";
+import { Data } from "./Data";
 const Droppable = ({selectDiv,setSelect}) =>{
     const [elements, setElements] = useState([]);
 
@@ -19,40 +20,38 @@ const Droppable = ({selectDiv,setSelect}) =>{
     console.log('content added' , elements);
 
     return(
-        <div className="canvas" >
+       
               <span ref={nodeRef}>
               
-              <div className='canvas'>
+              <div className='canvas' style={{position:"relative"}}>
               {
-                elements.map((item) =>{
+                Data.map((item) =>{
                     return (
                         <Draggable nodeRef={nodeRef}
               axis="both"
               handle=".handle"
-              defaultPosition={{x: 0, y: 0}}
-              position={null}
-            //   grid={[25, 25]}
+              defaultPosition={{x: item.defaultX, y: item.defaultY}}
+              // position={{x:item.defaultX,y:item.defaultY}}
+              // grid={[800,500]}
               scale={1}
               onStart={eventHandler}
               onDrag={eventHandler}  
               onStop={eventHandler}
               allowAnyClick={true}
-              bounds="parent">
-              <div>
-                {(
-                  <div className="handle" style={{border: "2px solid red", padding: "1rem", width:"20%"}}>
-                    {item.name}
-                    <span>        &#128465;</span>
-                  </div>
-                )}
-              </div>
+              // bounds={"parent"}
+              bounds={{top: -1, left: -1, right:605, bottom: 447}}
+              >
+                <div className="handle" style={{border: "2px solid red", padding: "1rem", width:"20%",position:"absolute"}}>
+                  {item.name}
+                  <span>&#128465;</span>
+                </div>
               </Draggable>
                     )
                 })
               }
           </div>   
                 </span>
-              </div>
+          
     )
 }
 
