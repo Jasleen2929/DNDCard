@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { Data } from './Data';
 import DraggableInputs from './DraggableInputs';
 import Droppable from './Droppable';
+import SavedScreen from './SavedScreen';
+import { BrowserRouter , Route , Routes } from 'react-router-dom';
 function App() {
 
   const [selectedDiv ,  setSelectedDiv] = useState();
@@ -15,11 +17,13 @@ function App() {
   
 
   return(
-    <>
-    <DraggableInputs selectDiv={selectedDiv} setSelect={setSelectedDiv}/>
-    <Droppable selectDiv={selectedDiv} setSelect={setSelectedDiv}/>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Droppable />} />
+        <Route path="/saved-screen" element={<SavedScreen />} />
+      </Routes>
+    </BrowserRouter>
+  );
   
 }
 

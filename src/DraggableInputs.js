@@ -1,45 +1,71 @@
+import React, { useEffect, useRef } from "react";
 import Draggable from "react-draggable";
-import { Data } from "./Data";
-import React from "react";
 import { useState } from "react";
+import { Data } from "./Data";
 
-
-const DraggableInputs = ({selectDiv,setSelect}) =>{
+const Droppable = ({ selectDiv, setSelect }) => {
   const [elements, setElements] = useState([]);
+  const nodeRef = useRef(null);
 
-  
-    
-    const updateDataFunction=(elementName)=>{
-      
-      setElements([...elements, elementName]);
-        //data
-        setSelect(elementName);
-    
-        
-        
-      }
-      
-      return (
-        
-        <div className="App">
-          <div className='container'>
-            <div className='content'>
-              {Data.map((item)=>{
-                return(
-                  
-                    <div className='d-flex Area'  key={item?.id} style={{width:[item.width],height:[item.height]}}>
-                  <span>{item?.name}</span>
-                  <button style={{borderRadius:"40px"}} onClick={()=>{updateDataFunction(item)}}>+</button>
-                </div>
-                  
-                )
-              })}
-             
-            </div>
+  useEffect(() => {
+    const storedElements = JSON.parse(localStorage.getItem("elements"));
+    if (storedElements) {
+      setElements(storedElements);
+    } else {
+      // If no positions are stored, use the default positions from Data
+      setElements(Data);
+    }
+  }, []);
 
-          </div>
-        </div>
-      );
-}
+  const eventHandler = (e, data, index) => {
+    const updatedElements = [...elements];
+    updatedElements[index].defaultX = data.x;
+    updatedElements[index].defaultY = data.y;
+    setElements(updatedElements);
+    localStorage.setItem("elements", JSON.stringify(updatedElements));
+  };
 
-export default DraggableInputs;
+  const handleSave = () => {
+    localStorage.setItem("elements", JSON.stringify(elements));
+  };
+
+  return (
+    <span ref={nodeRef}>
+      <div className="canvas" style={{ position: "relative" }}>
+        {elements.map((item, index) => {
+          return (
+            <Draggable
+              key={item.id}
+              nodeRef={nodeRef}
+              axis="both"
+              handle=".handle"
+              defaultPosition={{ x: item.defaultX, y: item.defaultY }}
+              scale={1}
+              onStart={(e, data) => eventHandler(e, data, index)}
+              onDrag={(e, data) => eventHandler(e, data, index)}
+              onStop={(e, data) => eventHandler(e, data, index)}
+              bounds={{ top: -1, left: -1, right: 605, bottom: 447 }}
+            >
+              <div
+                className="handle"
+                style={{
+                  border: "2px solid red",
+                  padding: "1rem",
+                  width: item.width,
+                  height: item.height,
+                  position: "absolute",
+                }}
+              >
+                {item.name}
+                <span>&#128465;</span>
+              </div>
+            </Draggable>
+          );
+        })}
+      </div>
+      <button onClick={handleSave}>Save</button>
+    </span>
+  );
+};
+
+export default Droppable;
